@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .small {
+            font-size: smaller;
+        }
+        .bolder {
+            font-weight: bolder;
+            font-style: italic;
+         }
+		span {
+    		color: red;
+    		font-style: italic;
+		}
+    </style>
+    <title>Red Hat AMQ Streams (Kafka) Sizing Calculator</title>
+</head>
+<body>
+    <img src="streams.png" alt="AMQ Streams" width="200" height="140">
+    <h1>A Simple Red Hat AMQ Streams (Kafka) Sizing Calculator</h1>
+    <p>Version 0.9</p><br />
+    <p class="bolder">The best way to accurately size your Kafka cluster is by simulating the target load on your  Kafka cluster. 
+        If you are planning to do that, you may want to use the load generation tools: kafka-producer-perf-test and kafka-consumer-perf-test, 
+        that come with Kafka, to simulate your target load. 
+        Documentation can be found <a href="https://docs.cloudera.com/documentation/enterprise/latest/topics/kafka_admin_cli.html#kafka_admin" target="_blank">here</a>.
+
+    </p>
+    <p>This calculator uses simple parameters to size and recommend your Red Hat AMQ Streams (Kafka) configuration, 
+        including the number of Zookeeper nodes, the number of Kafka broker nodes and the number of subscription cores required, among other things.
+    </p>
+    <hr>
+	<form action="#" th:action="@{/size}" method="post" th:object="${params}">
+		<h2>Broker Parameters</h2>
+		<p class="bolder">All input fields are mandatory. Some fields have been pre-populated for you with common values.
+		You can change the default values to suit your requirements.
+		</p>
+		<p></p>
+        <label for="messageRate">Target Message Rate (msgs/s):</label><br />
+        <input type="text" name="messageRate" id="messageRate" th:field="*{messageRate}"><br>
+        <span th:if="${#fields.hasErrors('messageRate')}" th:errors="*{messageRate}">messageRate error</span><br>
+        <label for="messageRate" class="small">The message rate your Kafka cluster is to handle.</label><p></p><br>
+
+        <label for="messageSize">Average Message Size (number of bytes):</label><br>
+        <input type="text" name="messageSize" id="messageSize" th:field="*{messageSize}"><br>
+        <span th:if="${#fields.hasErrors('messageSize')}" th:errors="*{messageSize}">messageSize error</span><br>   
+        <label for="messageSize" class="small">The average message size.</label><p></p><br>    
+ 
+
+        <label for="replicas">Number of Replicas:</label><br>
+        <input type="text" name="replicas" id="replicas" th:field="*{replicas}"><br>
+        <span th:if="${#fields.hasErrors('replicas')}" th:errors="*{replicas}">replicas error</span><br>
+        <label for="replicas" class="small">Replicas are used for redundancy. It affects the amount of storage as well as 
+        the performance of your Kafka cluster</label><p></p><br>        
+
+        <label for="netSpeed">Network Adapter Speed (Gbps):</label><br>
+        <input type="text" name="netSpeed" id="netSpeed" th:field="*{netSpeed}"><br>
+        <span th:if="${#fields.hasErrors('netSpeed')}" th:errors="*{netSpeed}">netSpeed error</span><br>
+        <label for="netSpeed" class="small">The network adapter is assumed to be working in full-duplex mode. Standard Gigabit network adapter is 1 Gbps. 
+        	It is likely that either the network adapter speed (or the max. disk throughput) is going to be the bottleneck of your system. 
+           You may want to use a higher speed network adapter if that is the case.</label><p></p><br>        
+ 
+        <label for="diskThroughput">Max. Disk Throughput (MB/s):</label><br>
+        <input type="text" name="diskThroughput" id="diskThroughput" th:field="*{diskThroughput}"><br>
+        <span th:if="${#fields.hasErrors('diskThroughput')}" th:errors="*{diskThroughput}">diskThroughput error</span><br>
+        <label for="diskThroughput" class="small">For hard disks, it is around 125 MB/s. For SSDs, it could be 400MB/s or higher.</label><p></p><br>        
+
+        <label for="maxUtil">Max. Utilisation Allowed for Network Adapter and Disk Subsystem (between 0.01 and 1.00):</label><br>
+        <input type="text" name="maxUtil" id="maxUtil" th:field="*{maxUtil}"><br>
+        <span th:if="${#fields.hasErrors('maxUtil')}" th:errors="*{maxUtil}">maxUtil error</span><br>
+        <label for="maxUtil" class="small">You do not want to have your network adapter and disk system running at 100% as this may impact the 
+            performance of the system during a sudden temporary surge in message rate.</label><p></p><br>        
+
+        <label for="consumerGroups">Number of Consumer Groups:</label><br>
+        <input type="text" name="consumerGroups" id="consumerGroups" th:field="*{consumerGroups}"><br>
+        <span th:if="${#fields.hasErrors('consumerGroups')}" th:errors="*{consumerGroups}">consumerGroups error</span><br>
+        <label for="consumerGroups" class="small">A consumer group is a group of related consumers that perform a task, like sending messages to 
+            a service. Different consumer groups can read from different offsets in a partition.</label><p></p><br>        
+
+        <label for="laggingConsumers">Number of Lagging Consumers:</label><br>
+        <input type="text" name="laggingConsumers" id="laggingConsumers" th:field="*{laggingConsumers}"><br>
+        <span th:if="${#fields.hasErrors('laggingConsumers')}" th:errors="*{laggingConsumers}">laggingConsumers error</span><br>
+        <label for="laggingConsumers" class="small">Caching of data reduces the need to read data from disk when readers (consumers in consumer groups) 
+            read data. However, the size of the cache is finite. When a slow reader tries to read the data, the data may have already been 
+            evicted from the cache necessitating a disk read which impacts performance. The more lagging consumers, the more impact on performance.
+        </label>
+        <ul>
+            <li>
+                <label for="laggingConsumers" class="small">0 is the best case scenario. 0 means that there are no lagging readers ie, 
+                    all data are in the cache and the reads do not incur the penalty of reading from disk.
+                </label></li><br>
+            <li>
+                <label for="laggingConsumers" class="small">{# of Consumer Groups} + ({# of Replicas} - 1) is the worst case scenario.
+                    This implies that all reads from readers of the consumer groups as well as the followers trying to read the data from the leader 
+                    to store them on their local disk incur the penalty of reading from disk.
+                </label>
+            </li>
+        </ul>
+        <p></p><br>        
+
+        <label for="retentionPariod">Data Retention Period (number of days):</label><br>
+        <input type="text" name="retentionPariod" id="retentionPariod" th:field="*{retentionPariod}"><br>
+        <span th:if="${#fields.hasErrors('retentionPariod')}" th:errors="*{retentionPariod}">retentionPariod error</span><br>
+        <label for="retentionPariod" class="small">This parameter is used to estimate the total storage required for the solution.</label><p></p><br>        
+       
+
+        <label for="zkFailures">Number of Zookeeper Node Failures that can be Tolerated (1 or 2):</label><br>
+        <input type="text" name="zkFailures" id="zkFailures" th:field="*{zkFailures}"><br>
+        <span th:if="${#fields.hasErrors('zkFailures')}" th:errors="*{zkFailures}">zkFailures error</span><br>
+        <label for="zkFailures" class="small">A Zookeeper cluster keeps track of status of the Kafka cluster nodes and Kafka topics, 
+            partitions etc. The number of Zookeeper nodes is always an odd number: 3, 5, 7, etc. This parameter determines the size of your 
+            Zookeeper cluster.
+        </label><p></p><hr>
+        
+        <h2>Partition Parameters</h2>
+		<p class="bolder">The following are optional parameters for estimating the minimum number of partitions required for a topic. This estimation will
+		be skipped if any of the following fields are left at zero (0).
+		</p>
+		<p></p>
+		
+		<label for="topicThroughput">Target Throughput of a Topic (MB/s):</label><br>
+        <input type="text" name="topicThroughput" id="topicThroughput" th:field="*{topicThroughput}"><br>
+        <span th:if="${#fields.hasErrors('topicThroughput')}" th:errors="*{topicThroughput}">topicThroughput error</span><br>
+        <label for="topicThroughput" class="small"> 
+            This parameter specifies the target throughput for a topic.  
+        </label><p></p><br>      
+
+        <label for="producerThroughput">Throughput of the Slowest Producer (MB/s):</label><br>
+        <input type="text" name="producerThroughput" id="producerThroughput" th:field="*{producerThroughput}"><br>
+        <span th:if="${#fields.hasErrors('producerThroughput')}" th:errors="*{producerThroughput}">producerThroughput error</span><br>
+        <label for="producerThroughput" class="small"> 
+            This parameter is used to estimate the minimum number of partitions needed for producers to produce the target message throughput.
+        </label><p></p><br>        
+
+        <label for="consumerThroughput">Throughput of the Slowest Consumer (MB/s):</label><br>
+        <input type="text" name="consumerThroughput" id="consumerThroughput" th:field="*{consumerThroughput}"><br>
+        <span th:if="${#fields.hasErrors('consumerThroughput')}" th:errors="*{consumerThroughput}">consumerThroughput error</span><br>
+        <label for="consumerThroughput" class="small">This parameter is used to estimate the minimum number of partitions needed for consumers to
+        consume at the target message throughput.
+        </label><p></p><hr>        
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

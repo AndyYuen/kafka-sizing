@@ -1,0 +1,14 @@
+metadata:
+  annotations:
+    configmap.jkube.io/update-on-change: ${project.artifactId}
+spec:
+  template:
+    spec:
+      containers:
+        - volumeMounts:
+            - name: config
+              mountPath: /app/config          
+      volumes:
+        - configMap:
+            name: ${project.artifactId}
+          name: config

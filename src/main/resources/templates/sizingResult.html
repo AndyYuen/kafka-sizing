@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .small {
+            font-size: smaller;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+        }
+		form {
+			display: table;
+		}
+		form div {
+			display: table-row;
+		}
+		label, input, span, select {
+			display: table-cell;
+			margin: 5px;
+			text-align: right;		
+		}
+		form div div {
+			display: table-cell;
+		}
+		.leftside {
+			width: 90%;
+		}
+		.rightsie {
+			width: 10%
+		}
+    </style>
+    <img src="streams.png" alt="AMQ Streams" width="200" height="140">
+    <title>Red Hat AMQ Streams (Kafka) Sizing Results</title>
+</head>
+<body>
+
+	<form action="#" th:action="@{/size}" method="get">
+		<div>
+			<div  class="leftside">
+				<h1>Red Hat AMQ Streams (Kafka) Sizing Results</h1>
+			</div>
+			<div  class="rightside">
+				<input type="submit" value="Edit My Input Parameters">
+			</div>
+		</div>
+	</form>
+	<hr>
+
+	<h2>Storage</h2>
+	    <table>
+            <tr>
+            	<td>Daily Disk Storage Needed (GB)</td>
+            	<td><span th:text="${results.dailyDiskUsage}"></span></td>
+    		</tr>
+            <tr>
+            	<td>Total Disk Storage Needed (GB)</td>
+            	<td><span th:text="${results.totalDiskStorage}"></span></td>
+    		</tr>
+    	</table><br/>
+    	<hr>
+    	
+    <h2>Zookeeper and Kafka Cluster Size</h2>
+        <table>
+            <tr>
+                <th>Cluster</th>
+                <th># of Nodes</th>
+                <th># of vCPUs per Node</th>
+                <th>Subscription Core Count</th>
+                <th>RAM (GB)</th>
+                <th>Disk (GB)</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>Zookeeper</td>
+                <td th:text="${results.zkNodes}"></td>
+                <td th:text="${results.vcpusPerZkNode}"></td>
+                <td>0</td>
+                <td th:text="${results.memPerZkNode}"></td>
+                <td th:text="${results.diskPerZkNode}"></td>
+                <td>Cores used not counted in subscription</td>
+            </tr>
+            <tr>
+                <td>Kafka Broker</td>
+                <td th:text="${results.brokerNodes}"></td>
+                <td th:text="${results.vcpusPerBroker}"></td>
+                <td th:text="${results.cores}"></td>
+                <td th:text="${results.memPerBroker}"></td>
+                <td th:text="${results.diskPerBroker}"></td>
+                <td>Total storage may exceed that stated in the previous section to cater for overhead and data imbalance</td>
+            </tr>
+        </table><p></p>  
+    <div th:if="${results.partitions} != 0">
+    <hr>
+    <h2>Topic-Partition Assessment</h2>
+        <table>
+            <tr>
+            	<td>Target Topic Message Throughput (MB/s)</td>
+            	<td><span th:text="${results.topicThroughput}"></span></td>
+    		</tr>
+            <tr>
+            	<td>Minimum number of Partitions Needed</td>
+            	<td><span th:text="${results.partitions}"></span></td>
+    		</tr>
+    	</table><br/>
+    </div>
+    <hr>
+    <h2>Guidelines for Other Components</h2>
+        <table>
+            <tr>
+                <th>Component</th>
+                <th># of Nodes</th>
+                <th># of vCPUs per Node</th>
+                <th>Subscription Core Count</th>
+                <th>Ram (GB)</th>
+                <th>Disk (GB)</th>
+            </tr>
+            <tr>
+                <td>Kafka Connect</td>
+                <td >At least 2</td>
+                <td>1 + 1 per connector</td>
+                <td>1/2 + 1/2 per connector</td>
+                <td>2 + 1 per connector</td>
+                <td>n/a</td>
+            </tr>
+            <tr>
+                <td>Cluster Operator</td>
+                <td>1</td>
+                <td>1</td>
+                <td>0 (not counted in subscription)</td>
+                <td>1</td>
+                <td>n/a</td>
+            </tr>
+            <tr>
+                <td>Entity Operator</td>
+                <td>1</td>
+                <td>1</td>
+                <td>0 (not counted in subscription)</td>
+                <td>2</td>
+                <td>n/a</td>
+            </tr>
+            <tr>
+                <td>Kafka (HTTP) Bridge</td>
+                <td>At least 2</td>
+                <td>4</td>
+                <td>4</td>
+                <td>Max 50MB per consumer; Max 32MB per producer</td>
+                <td>n/a</td>
+            </tr>
+            <tr>
+                <td>Schema Registry</td>
+                <td>3</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>PostgreSQL storage calculated based on number of schemas and expected size</td>
+            </tr>
+        </table><p></p><hr>
+</body>
+</html>
