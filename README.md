@@ -8,10 +8,10 @@ Enterprises planning to use Red Hat AMQ Streams (Kafka) want to get an idea as t
 
 
 ## An Analytical Model
-It will takes up too much space here to describe the analytical model I used for this sizing tool. Instead, I have included it in the repository: "AMQ Streams (Kafka) Sizing Tool - Analytical Model.pdf", for those who are interested. 
+It will take up too much space here to describe the analytical model I used for this sizing tool. Instead, I have included it in the repository: "AMQ Streams (Kafka) Sizing Tool - Analytical Model.pdf", for those who are interested. 
 
 ## User Interface and Sizing Output
-Here is a sreenshot of the UI:
+Here is a screenshot of the UI:
 ![App UI](images/sizingParameters.png "APP UI")
 
 Here is a screenshot of the sizing results:
@@ -50,7 +50,7 @@ Please note that you need to execute the package mvn goal before creating the co
 * Identify the MySQL pod, rsh into it and login to MySQL as root:
 ![Login to MySQL](images/pd-mysql.png "Login to MySQL")
 
-* Paste the SQL script to create the scehma
+* Paste the SQL script to create the schema
 ![Initialise schema](images/pd-mysql2.png "Initialise schema")
 
 ## ENJOY ;-) !!! 
