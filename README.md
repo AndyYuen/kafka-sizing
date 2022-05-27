@@ -1,7 +1,7 @@
 # An AMQ Streams (Kafka) Sizing Tool
 
 _You can access my Kafka sizing tool using the link 
-[here]([[http://mrdreambot.ddns.net:8081/size](https://kafkasizing.azurewebsites.net/size?))._
+[here](https://kafkasizing.azurewebsites.net/size?)._
 
 Note that the first time you access it, it may timeout or take a long time as the container would have been stopped due to inactivity.
 
