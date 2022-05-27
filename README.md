@@ -1,7 +1,12 @@
 # An AMQ Streams (Kafka) Sizing Tool
 
 _You can access my Kafka sizing tool using the link 
-[here](http://mrdreambot.ddns.net:8081/size)._
+[here]([http://mrdreambot.ddns.net:8081/size](https://kafkasizing.azurewebsites.net/size?))._
+
+Note that the first time you access it, it may timeout or take a long time as the container would have been stopped due to inactivity.
+
+Also, the calculator will give a preconfigured minimum even if your input requirements require less resources. We are talking about enterprise env here.
+
 
 ## Problem statement
 Enterprises planning to use Red Hat AMQ Streams (Kafka) want to get an idea as to how many subscription cores they need to purchase. The intention of this tool is to provide an educated estimate. Nothing beats simulating the load on your hardware but this is not always feasible. The next best thing is to develop an analytical model to do the estimation.
